@@ -16,10 +16,13 @@ pip install poetry
 
 ## Run examples
 
-
-# Running the UI
-
+```bash
+python .\dspy_agents\real_estate\test\test_simple_agent.py
 ```
+
+## Running the UI
+
+```bash
 python ./dspy_agents/real_estate/webapp.py
 ```
 
