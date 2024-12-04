@@ -1,0 +1,40 @@
+:root {
+    --footer-height: 40px;
+  }
+
+.main {
+    padding-top: 1em;
+    min-height: calc(100vh - var(--footer-height));
+}
+
+.grid-container { 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+button {
+    min-width: 200px;
+}
+
+button.delete {
+    background-color: #dc2626;
+    color: white;
+}
+
+button.short {
+    min-width: auto;
+}
+
+.footer {
+    height: var(--footer-height);
+}
+
+.chat {
+    width: 100%
+}
+
+.agents-image {
+    width: 100%;
+    display: block
+}
