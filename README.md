@@ -6,12 +6,13 @@ Example project with DSPY Agents.
 
 We suggest to use [Conda](https://docs.conda.io/en/latest/) to manage the virtual environment and then install poetry.
 
-```
+```bash
 conda deactivate
 conda remove -n dspy_agents --all
 conda create -n dspy_agents python=3.12
 conda activate dspy_agents
 pip install poetry
+poetry install
 ```
 
 ## Run examples

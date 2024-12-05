@@ -79,7 +79,7 @@ def get():
             Li("Can you find properties in Cricklewood under 2 million pounds? Preferably some houses."),
             Li("Can you find houses in Liverpool under 1 million pounds?"),
             Li("Can you find apartments near Barnett in London under 1 million pounds?"),
-            Li("Can you find properties in SW2 between 500000 and 1 million pounds?"),
+            Li("Are there any properties in SW2 between 500000 and 1 million pounds?"),
         ),
         P("Please enter your real estate query and press ENTER"),
         Form(
