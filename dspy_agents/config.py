@@ -23,9 +23,6 @@ class Config:
 
     dspy.configure(lm=dspy.LM(openai_api_model))
 
-    image_path = os.getenv("IMAGE_PATH")
-    image_path = Path(image_path)
-
     prompts_path = os.getenv("PROMPTS_PATH", (Path(__file__)/"prompts").as_posix())
     prompts_path = Path(prompts_path)
     assert prompts_path.exists(), f"The template path does not exist."

@@ -5,7 +5,6 @@ from fasthtml.common import (
     FileResponse,
     picolink,
     Div,
-    Span,
     Article,
     P,
     A,
