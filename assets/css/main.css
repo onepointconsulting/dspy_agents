@@ -1,6 +1,7 @@
 :root {
     --footer-height: 40px;
-  }
+    --pico-icon-loading: url(/images/loading.svg);
+}
 
 .main {
     padding-top: 1em;
@@ -37,4 +38,8 @@ button.short {
 .agents-image {
     width: 100%;
     display: block
+}
+
+.loading {
+    padding-right: 10px
 }
