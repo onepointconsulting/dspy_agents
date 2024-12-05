@@ -1,4 +1,3 @@
-from typing import Optional
 import dspy
 from dspy.predict.react import Tool
 from dspy_agents.real_estate.tools.tools import (
