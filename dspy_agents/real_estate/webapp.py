@@ -78,7 +78,8 @@ def get():
             Li("Can you find properties in Aberdeen under 1 million pounds?"),
             Li("Can you find properties in Cricklewood under 2 million pounds? Preferably some houses."),
             Li("Can you find houses in Liverpool under 1 million pounds?"),
-            Li("Can you find apartments near Barnett in London under 1 million pounds?")
+            Li("Can you find apartments near Barnett in London under 1 million pounds?"),
+            Li("Can you find properties in SW2 between 500000 and 1 million pounds?"),
         ),
         P("Please enter your real estate query and press ENTER"),
         Form(
@@ -90,7 +91,7 @@ def get():
             hx_swap="innerHTML",
         ),
         Article(Img(src="/images/loading.svg", cls="loading"), "The agent is trying to fetch some properties. Please wait ...", area_busy="true", id=ID_SPINNER, cls="htmx-indicator"),
-        Div(id=ID_CARD, style="margin-top: 20px;"),
+        Div(id=ID_CARD, style="margin-top: -60px;"),
         cls="main container",
     )
 

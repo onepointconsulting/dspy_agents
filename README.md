@@ -27,3 +27,9 @@ python ./dspy_agents/real_estate/webapp.py
 ```
 
 The server will start on http://localhost:5001
+
+## Screenshots
+
+This is how the application looks like:
+
+![Real Estate Agent](./docs/screenshots/sw2_example.png)
