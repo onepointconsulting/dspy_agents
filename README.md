@@ -21,11 +21,15 @@ poetry install
 
 ## Run examples
 
+Change directory to the root folder and then execute this command.
+
 ```bash
-python .\dspy_agents\real_estate\test\test_simple_agent.py
+python ./dspy_agents/real_estate/test/test_simple_agent.py
 ```
 
 ## Running the UI
+
+Change directory to the root folder and then execute this command.
 
 ```bash
 python ./dspy_agents/real_estate/webapp.py

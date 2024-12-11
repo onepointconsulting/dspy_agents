@@ -1,5 +1,7 @@
 from pathlib import Path
-from dspy_agents.real_estate.agent.simple_agent import agent
+from dspy_agents.real_estate.agent.simple_agent import create_simple_agent
+
+agent = create_simple_agent()
 
 
 def predict_property(question: str, file_name: str):

@@ -20,11 +20,12 @@ from fasthtml.common import (
     Form,
     Textarea,
     Img,
+    NotStr
 )
 from fasthtml.common import serve
-from markdown import markdown
 
-from dspy_agents.real_estate.agent.simple_agent import agent
+from dspy_agents.real_estate.agent.simple_agent import create_simple_agent
+from dspy_agents.logger import logger
 
 ID_CARD = "card"
 ID_SPINNER = "spinner"
@@ -42,9 +43,8 @@ app = FastHTML(
     ),
     htmlkw={"data-theme": "dark"},
     ftrs=(footer,),
+    exts="ws",
 )
-
-
 
 
 @app.route("/{fname:path}.{ext:static}")
@@ -75,33 +75,53 @@ def get():
         P("Examples"),
         Ul(
             Li("Can you find properties in Aberdeen under 1 million pounds?"),
-            Li("Can you find properties in Cricklewood under 2 million pounds? Preferably some houses."),
+            Li(
+                "Can you find properties in Cricklewood under 2 million pounds? Preferably some houses."
+            ),
             Li("Can you find houses in Liverpool under 1 million pounds?"),
-            Li("Can you find apartments near Barnett in London under 1 million pounds?"),
+            Li(
+                "Can you find apartments near Barnett in London under 1 million pounds?"
+            ),
             Li("Are there any properties in SW2 between 500000 and 1 million pounds?"),
         ),
         P("Please enter your real estate query and press ENTER"),
         Form(
             Textarea(cls="chat", id="question"),
-            hx_post="/property_agent",
             hx_trigger="keyup[key=='Enter']",
             hx_indicator=f"#{ID_SPINNER}",
             target_id=ID_CARD,
             hx_swap="innerHTML",
+            ws_send=True,
         ),
-        Article(Img(src="/images/loading.svg", cls="loading"), "The agent is trying to fetch some properties. Please wait ...", area_busy="true", id=ID_SPINNER, cls="htmx-indicator"),
+        Article(
+            Img(src="/images/loading.svg", cls="loading"),
+            "The agent is trying to fetch some properties. Please wait ...",
+            area_busy="true",
+            id=ID_SPINNER,
+            cls="htmx-indicator",
+        ),
         Div(id=ID_CARD, style="margin-top: -60px;"),
         cls="main container",
+        hx_ext="ws",
+        ws_connect="/property_agent",
     )
 
 
-@app.route("/property_agent")
-def post(question: str):
-    template = (cfg.prompts_path/"real_estate.txt").read_text()
+@app.ws("/property_agent")
+async def ws(question: str, send):
+    template = (cfg.prompts_path / "real_estate.txt").read_text()
     question = template.format(question=question)
-    print(question)
+    logger.info(question)
+    agent = create_simple_agent()
+    await send(Div(Article(
+            Img(src="/images/loading.svg", cls="loading"),
+            "The agent is trying to fetch some properties. Please wait ...",
+            area_busy="true",
+            id=ID_SPINNER,
+        ), id=ID_CARD, style="margin-top: -60px;"))
     prediction = agent(question=question)
-    return prediction.answer
+    await send(Div(NotStr(prediction.answer), id=ID_CARD, style="margin-top: -60px;"))
+    logger.info(f"Sent {prediction.answer}")
 
 
 if __name__ == "__main__":
