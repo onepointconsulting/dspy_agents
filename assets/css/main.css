@@ -43,3 +43,32 @@ button.short {
 .loading {
     padding-right: 10px
 }
+
+#card, .card {
+    width: 100%;
+}
+
+#history {
+    width: 100%
+}
+
+#results {
+    display: flex; 
+    flex-wrap: wrap
+}
+
+
+@media (min-width: 768px) { 
+    #card, .card {
+        width: 50%;
+    }
+    
+    #history {
+        width: 50%
+    }
+    
+    #results {
+        display: flex; 
+        flex-wrap: wrap
+    }
+}

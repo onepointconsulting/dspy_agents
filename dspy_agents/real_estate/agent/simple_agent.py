@@ -5,13 +5,14 @@ from dspy_agents.real_estate.tools.tools import (
     property_search,
     property_identifier,
 )
+from dspy_agents.real_estate.agent.CallbackReAct import CallbackReAct, ReActCallback
 from dspy.utils.callback import BaseCallback
 from dspy_agents.logger import logger
 
 
-def create_simple_agent():
-    agent = dspy.ReAct(
-        "question -> answer",
+def create_simple_agent(callbacks: list[ReActCallback] = []):
+    agent = CallbackReAct(
+        signature="question -> answer",
         tools=[
             Tool(
                 location_search,
@@ -40,6 +41,7 @@ def create_simple_agent():
                 },
             ),
         ],
+        react_callbacks=callbacks,
     )
     return agent
 

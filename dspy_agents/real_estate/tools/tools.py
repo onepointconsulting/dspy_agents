@@ -138,7 +138,7 @@ def create_search_url(
     if not min_price or min_price == 0:
         min_price = 200000
     url += f"&MinPrice={min_price}"
-        
+
     logger.info(f"URL: {url}")
     return url
 
