@@ -57,6 +57,9 @@ button.short {
     flex-wrap: wrap
 }
 
+.hidden {
+    display: none
+}
 
 @media (min-width: 768px) { 
     #card, .card {
@@ -72,3 +75,4 @@ button.short {
         flex-wrap: wrap
     }
 }
+

@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault(); // Prevents the default behavior (e.g., adding a new line)
             console.log('Enter key pressed!');
             document.getElementById("card").innerHTML = ""
+            const hiddenCards = [...document.querySelectorAll(".card.hidden")]
+            hiddenCards.forEach(el => el.classList.remove("hidden"))
         }
     });
     

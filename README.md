@@ -17,6 +17,9 @@ poetry install
 
 ## Configuration
 
+An example of a configuration file can be found here with the main variables that you need to define:
+
+.env_local
 
 
 ## Run examples
@@ -32,7 +35,7 @@ python ./dspy_agents/real_estate/test/test_simple_agent.py
 Change directory to the root folder and then execute this command.
 
 ```bash
-python ./dspy_agents/real_estate/webapp.py
+python ./dspy_agents/main/webapp.py
 ```
 
 The server will start on http://localhost:5001

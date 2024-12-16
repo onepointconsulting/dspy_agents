@@ -27,5 +27,11 @@ class Config:
     prompts_path = Path(prompts_path)
     assert prompts_path.exists(), f"The template path does not exist."
 
+    generation_folder_str = os.getenv("GENERATION_FOLDER")
+    assert generation_folder_str is not None, "Please specify a generation folder"
+    generation_folder = Path(generation_folder_str)
+    if not generation_folder.exists():
+        generation_folder.mkdir(parents=True)
+
 
 cfg = Config()
