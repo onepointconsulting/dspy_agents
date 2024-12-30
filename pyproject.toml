@@ -15,10 +15,16 @@ beautifulsoup4 = "^4.12.3"
 python-fasthtml = "^0.10.1"
 markdown = "^3.7"
 asyncer = "^0.0.8"
+langgraph = "^0.2.60"
+sqlalchemy = "^2.0.36"
+mysqlclient = "^2.2.6"
+langchain-community = "^0.3.13"
+langchain-openai = "^0.2.14"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.8.0"
 black = "^24.10.0"
+pytest = "^8.3.4"
 
 
 [build-system]

@@ -34,7 +34,7 @@ def create_simple_agent(callbacks: list[ReActCallback] = []):
                 desc="Based on a location, a maximum price and a currency finds multiple real estate properties. The currency is given in a 3 leeter abbreviation, like USD, EUR or GBP",
                 args={
                     "location_identifier": "The identifier of the location used by Savills. Example: 'Id_43379 Category_Postcode'[str]",
-                    "max_price": "The minimum price a specific currency, like e.g: '100000'[Optional[int]]",
+                    "min_price": "The minimum price a specific currency, like e.g: '100000'[Optional[int]]",
                     "max_price": "The maximum price a specific currency, like e.g: '500000'[int]",
                     "currency": "A currency identifier like 'GBP', 'USD', 'EUR'[str]",
                     "property_types": "The list of property types as specific codes[list[str]]",

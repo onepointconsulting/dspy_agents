@@ -3,6 +3,7 @@ import os
 
 import dspy
 from dspy_agents.logger import logger
+from langchain_openai.chat_models import ChatOpenAI
 
 from dotenv import load_dotenv
 
@@ -25,13 +26,21 @@ class Config:
 
     prompts_path = os.getenv("PROMPTS_PATH", (Path(__file__) / "prompts").as_posix())
     prompts_path = Path(prompts_path)
-    assert prompts_path.exists(), f"The template path does not exist."
+    assert prompts_path.exists(), "The template path does not exist."
 
     generation_folder_str = os.getenv("GENERATION_FOLDER")
     assert generation_folder_str is not None, "Please specify a generation folder"
     generation_folder = Path(generation_folder_str)
     if not generation_folder.exists():
         generation_folder.mkdir(parents=True)
+
+    db_connection_sakila = os.getenv("DB_CONNECTION_SAKILA")
+    assert db_connection_sakila is not None
+
+    llm = ChatOpenAI(
+        model=openai_api_model.split("/")[1],
+        temperature=float(os.getenv("OPENAI_API_TEMPERATURE")),
+    )
 
 
 cfg = Config()

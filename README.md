@@ -45,3 +45,9 @@ The server will start on http://localhost:5001
 This is how the application looks like:
 
 ![Real Estate Agent](./docs/screenshots/sw2_example.png)
+
+## Checking the dependency tree
+
+```bash
+poetry show --tree
+```

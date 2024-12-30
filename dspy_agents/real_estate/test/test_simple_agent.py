@@ -53,11 +53,3 @@ def test_simple_agent_nottingham():
         "Can you find an apartment or a house in Nottigham between 100000 and 1000000 dollars?",
         "cambridge.txt",
     )
-
-
-if __name__ == "__main__":
-    test_simple_agent_willesden_green()
-    # test_simple_agent_dollis_hill()
-    # test_simple_agent_manchester()
-    # test_simple_agent_cambridge()
-    # test_simple_agent_nottingham()
