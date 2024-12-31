@@ -79,3 +79,33 @@ class WSCodeCallBack(ProgramOfThoughtCallback):
 
     def on_module_end(self, call_id: int, results: any, error: any) -> None:
         logger.info(f"End: {call_id}")
+
+
+class WSToolsCallBack(ReActCallback):
+
+    def __init__(self, send, loop):
+        super().__init__()
+        self.send = send
+        self.loop = loop
+        self.tools = []
+
+    def on_thought(self, thought: str):
+        logger.info(thought)
+
+    def on_tool(self, tool_name: str, tool_args: dict):
+        logger.info(f"{tool_name} - {tool_args}")
+        self.tools.append({"name": tool_name, "keys": tool_args.keys(), "values": tool_args.values()})
+        def print_args(t: dict):
+            return "".join([f"<li>{k}: {v}</li>" for k,v in zip(t['keys'], t['values'])])
+        all_tools = "".join([f"""
+<li>
+    tool: {t['name']}
+    <ul>{print_args(t)}</ul>
+</li>
+""" for t in self.tools])
+        future = asyncio.run_coroutine_threadsafe(self.send(all_tools), self.loop)
+        future.result()
+
+    def on_observe(self, observation: str):
+        if observation:
+            logger.info(observation)

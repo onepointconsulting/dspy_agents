@@ -18,7 +18,7 @@ from dspy_agents.sql_agent import cfg
 from dspy_agents.logger import logger
 
 # TODO: consider adding config parameter
-LIMIT = 200
+LIMIT = 100
 LIMIT_EXPRESSION = f" limit {LIMIT};"
 
 engine_sakila = create_engine(cfg.db_connection_sakila, echo=True)
@@ -102,11 +102,10 @@ Output the final SQL query only.
 SQL Query: """
 
 
-
-class QuerySQLCheckerTool():  # type: ignore[override, override]
+class QuerySQLCheckerTool:  # type: ignore[override, override]
     """Use an LLM to check if a query is correct.
     Adapted from https://www.patterns.app/blog/2023/01/18/crunchbot-sql-analyst-gpt/
-    
+
     Use this tool to double check if your query is correct before executing it.
     Always use this tool before executing a query with sql_db_query!
     """
@@ -114,16 +113,16 @@ class QuerySQLCheckerTool():  # type: ignore[override, override]
     def __init__(self, db: SQLDatabase):
         self.db = db
         self.llm_chain = LLMChain(
-                llm=cfg.llm,
-                prompt=PromptTemplate(
-                    template=QUERY_CHECKER, input_variables=["dialect", "query"]
-                ),
-            )
+            llm=cfg.llm,
+            prompt=PromptTemplate(
+                template=QUERY_CHECKER, input_variables=["dialect", "query"]
+            ),
+        )
 
         if self.llm_chain.prompt.input_variables != ["dialect", "query"]:
             raise ValueError(
                 "LLM chain for QueryCheckerTool must have input variables ['query', 'dialect']"
-            )        
+            )
 
     def run(
         self,

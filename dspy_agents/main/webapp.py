@@ -30,7 +30,8 @@ from asyncer import asyncify
 from dspy_agents.real_estate.agent.simple_agent import create_simple_agent
 from dspy_agents.program_of_thought.agent.agent_factory import create_coding_agent
 from dspy_agents.logger import logger
-from dspy_agents.main.callbacks import WSCallBack, WSCodeCallBack
+from dspy_agents.main.callbacks import WSCallBack, WSCodeCallBack, WSToolsCallBack
+from dspy_agents.sql_agent.agent.simple_agent import execute_sql_agent_query
 
 
 ID_CARD = "card"
@@ -66,6 +67,7 @@ def get():
     agents = [
         {"name": "Property Agent", "href": "/property"},
         {"name": "Coder Agent", "href": "/coder"},
+        {"name": "SQL Query Agent", "href": "/sql"}
     ]
     agents_block = [Div(Blockquote(H2(A(a["name"], href=a["href"])))) for a in agents]
     return Div(
@@ -90,7 +92,7 @@ def generate_agent_layout(
     question_links: list[str], title: str, instruction: str, ws_connect: str
 ):
     return Div(
-        H1(title),
+        Div(H1(title), A(NotStr("&#8962; Home"), href="/", style="font-size: 1.5em"), cls="title-header"),
         P("Examples"),
         Ul(*createQuestionLinks(question_links)),
         P(instruction),
@@ -147,16 +149,52 @@ def get():
     )
 
 
+@app.route("/sql")
+def get():
+    question_links = [
+        "Can you list all tables in the database?",
+        "Can you list all actors in the database?",
+        "Which customers have ordered the most products?",
+        "Which countries have the most cities in the database?",
+        "How many orders are there in the database?",
+        "From which countries came most orders?",
+        "Which actors were involved in the ACADEMY DINOSAUR movie?",
+        "Which are the most popular movies in the database?",
+        "Which are the most popular film categories by movie rental?",
+        "What do you know about the actor ROCK DUKAKIS based on the current database? In which movies did he act?"
+    ]
+    return generate_agent_layout(
+        question_links,
+        "SQL Query Agent",
+        "Please enter your question to the SQL query agent",
+        "/sql_agent",
+    )
+
+
 def build_send_ws(send: callable):
     async def send_ws(text: str):
         await send(Div(NotStr(text), id=ID_HISTORY))
-
     return send_ws
 
 
 async def send_prediction(send: callable, prediction: any):
-    await send(Div(NotStr(prediction.answer), id=ID_CARD))
-    logger.info(f"Sent {prediction.answer}")
+    answer = prediction if isinstance(prediction, str) else prediction.answer
+    await send(Div(NotStr(answer), id=ID_CARD))
+    logger.info(f"Sent {answer}")
+
+
+async def display_loading(send, message: str):
+    await send(
+        Div(
+            Div(
+                Img(src="/images/loading.svg", cls="loading"),
+                message,
+                area_busy="true",
+                id=ID_SPINNER,
+            ),
+            id=ID_CARD,
+        )
+    )
 
 
 @app.ws("/property_agent")
@@ -164,17 +202,7 @@ async def ws(question: str, send):
     template = (cfg.prompts_path / "real_estate.txt").read_text()
     question = template.format(question=question)
     logger.info(question)
-    await send(
-        Div(
-            Div(
-                Img(src="/images/loading.svg", cls="loading"),
-                "The agent is trying to fetch some properties. Please wait ...",
-                area_busy="true",
-                id=ID_SPINNER,
-            ),
-            id=ID_CARD,
-        )
-    )
+    await display_loading(send, "The agent is trying to fetch some properties. Please wait ...")
 
     agent = create_simple_agent(
         [WSCallBack(build_send_ws(send), asyncio.get_event_loop())]
@@ -186,10 +214,18 @@ async def ws(question: str, send):
 @app.ws("/coding_agent")
 async def ws(question: str, send):
 
+    await display_loading(send, "The agent is trying to calculate. Please wait ...")
     agent = create_coding_agent(
         [WSCodeCallBack(build_send_ws(send), asyncio.get_event_loop())]
     )
     prediction = await asyncify(agent)(question=question)
+    await send_prediction(send, prediction)
+
+
+@app.ws("/sql_agent")
+async def ws(question: str, send):
+    await display_loading(send, "The agent is trying to query the database ...")
+    prediction = await asyncify(execute_sql_agent_query)(question, [WSToolsCallBack(build_send_ws(send), asyncio.get_event_loop())])
     await send_prediction(send, prediction)
 
 

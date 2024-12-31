@@ -8,13 +8,18 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.runnables.base import RunnableBinding
 
 from dspy_agents.config import cfg
-from dspy_agents.sql_agent.sql_tools import sql_list_tables_wrapper, sql_info_tables_wrapper, sql_query, sql_query_checker
+from dspy_agents.sql_agent.sql_tools import (
+    sql_list_tables_wrapper,
+    sql_info_tables_wrapper,
+    sql_query_wrapper,
+    sql_query_checker_wrapper,
+)
 from dspy_agents.main.callbacks import ReActCallback
 
 
 # Define the function that determines whether to continue or not
 def should_continue(state: MessagesState) -> Literal["tools", END]:
-    messages = state['messages']
+    messages = state["messages"]
     last_message = messages[-1]
     # If the LLM makes a tool call, then we route to the "tools" node
     if last_message.tool_calls:
@@ -22,17 +27,21 @@ def should_continue(state: MessagesState) -> Literal["tools", END]:
     # Otherwise, we stop (reply to the user)
     return END
 
+
 # Define the function that calls the model
 def create_call_model(model: RunnableBinding):
     def call_model(state: MessagesState):
-        messages = state['messages']
+        messages = state["messages"]
         response = model.invoke(messages)
         # We return a list, because this will get added to the existing list
         return {"messages": [response]}
+
     return call_model
 
 
-def create_workflow(model: RunnableBinding, tools: list[callable]) -> CompiledStateGraph:
+def create_workflow(
+    model: RunnableBinding, tools: list[callable]
+) -> CompiledStateGraph:
     workflow = StateGraph(MessagesState)
 
     agent_node = "agent"
@@ -56,19 +65,32 @@ def create_workflow(model: RunnableBinding, tools: list[callable]) -> CompiledSt
     return app
 
 
-def execute_query(query: str, callbacks: list[ReActCallback] = []) -> str:
-    
-    tools = [sql_list_tables_wrapper(callbacks), sql_info_tables_wrapper(callbacks), sql_query, sql_query_checker]
+def execute_sql_agent_query(query: str, callbacks: list[ReActCallback] = []) -> str:
+
+    tools = [
+        sql_list_tables_wrapper(callbacks),
+        sql_info_tables_wrapper(callbacks),
+        sql_query_wrapper(callbacks),
+        sql_query_checker_wrapper(callbacks),
+    ]
     model = cfg.llm.bind_tools(tools)
 
     app = create_workflow(model, tools)
     final_state = app.invoke(
-        {"messages": [
-            SystemMessage(content="""You are a SQL agent designed to interact with tools which extract information from a database. When a questions is asked you retrieve information from existing tables. 
-If the information cannot be found in the database, you say so."""),
-            HumanMessage(content=query)
-        ]},
-        config={"configurable": {"thread_id": 42}}
+        {
+            "messages": [
+                SystemMessage(
+                    content="""
+You are a SQL agent designed to interact with tools which extract information from a database. When a questions is asked you retrieve information from existing tables. 
+If the information cannot be found in the database, you say so.
+
+When you reply make sure to use HTML. Do not use markdown.
+"""
+                ),
+                HumanMessage(content=query),
+            ]
+        },
+        config={"configurable": {"thread_id": 42}},
     )
     final_response = final_state["messages"][-1].content
     return final_response

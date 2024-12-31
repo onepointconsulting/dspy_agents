@@ -1,23 +1,28 @@
-from dspy_agents.sql_agent.sql_tools import sql_list_tables, sql_info_tables, sql_query, sql_query_checker
+from dspy_agents.sql_agent.sql_tools import (
+    sql_list_tables_wrapper,
+    sql_info_tables_wrapper,
+    sql_query_wrapper,
+    sql_query_checker_wrapper,
+)
 
 
 def test_sql_list_tables():
-    res = sql_list_tables("")
+    res = sql_list_tables_wrapper()("")
     check_exists(res)
 
 
 def test_sql_info_tables():
-    res = sql_info_tables("actor")
+    res = sql_info_tables_wrapper()("actor")
     check_exists(res)
 
 
 def test_sql_query():
-    res = sql_query("select * from actor")
+    res = sql_query_wrapper()("select * from actor")
     check_exists(res)
 
 
 def test_sql_query_checker():
-    res = sql_query_checker("select * from actor")
+    res = sql_query_checker_wrapper()("select * from actor")
     check_exists(res)
 
 
